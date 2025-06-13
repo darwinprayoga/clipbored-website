@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { Analytics } from "@vercel/analytics/next";
 
 const sourceSansPro = Source_Sans_Pro({
   subsets: ["latin"],
@@ -121,6 +122,7 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange={false}
         >
+          <Analytics />
           <Navbar />
           {children}
           <Footer />
