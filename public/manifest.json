@@ -1,0 +1,21 @@
+{
+  "name": "Clipbored - Your daily hand",
+  "short_name": "Clipbored",
+  "description": "Smart clipboard and productivity tools to help you work more efficiently",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#334155",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
