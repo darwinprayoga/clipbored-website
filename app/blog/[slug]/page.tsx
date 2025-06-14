@@ -79,7 +79,7 @@ async function fetchPostBySlug(slug: string): Promise<WordPressPost | null> {
   try {
     const response = await fetch(
       `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?slug=${slug}`,
-      { cache: "no-store" },
+      { next: { revalidate: 3600 } },
     );
     if (!response.ok) {
       return null;
@@ -96,7 +96,9 @@ async function fetchCategories(): Promise<WordPressCategory[]> {
   try {
     const response = await fetch(
       "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/categories",
-      { cache: "no-store" },
+      {
+        next: { revalidate: 3600 },
+      },
     );
     if (!response.ok) {
       return [];
@@ -114,7 +116,7 @@ async function fetchMediaById(mediaId: number): Promise<WordPressMedia | null> {
   try {
     const response = await fetch(
       `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/media/${mediaId}`,
-      { cache: "no-store" },
+      { next: { revalidate: 3600 } },
     );
     if (!response.ok) {
       return null;
@@ -365,11 +367,48 @@ async function PostContent({ slug }: { slug: string }) {
               <Calendar className="w-4 h-4" />
               <time dateTime={post.date}>{formatDate(post.date)}</time>
             </div>
+            <Link
+              href={post.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 hover:text-gray-900"
+            >
+              <ExternalLink className="w-4 h-4" />
+              View Original
+            </Link>
           </div>
         </div>
 
         <div
-          className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-strong:text-gray-900 prose-img:rounded-lg"
+          className="prose prose-lg max-w-none 
+    prose-headings:text-gray-900 prose-headings:font-bold
+    prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8
+    prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-6 prose-h2:border-b prose-h2:border-gray-200 prose-h2:pb-2
+    prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-5
+    prose-h4:text-lg prose-h4:mb-2 prose-h4:mt-4
+    prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
+    prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800
+    prose-strong:text-gray-900 prose-strong:font-semibold
+    prose-em:text-gray-800 prose-em:italic
+    prose-ul:my-4 prose-ul:pl-6
+    prose-ol:my-4 prose-ol:pl-6
+    prose-li:mb-2 prose-li:text-gray-700
+    prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
+    prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+    prose-pre:bg-gray-900 prose-pre:text-white prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
+    prose-img:rounded-lg prose-img:shadow-md prose-img:my-6
+    prose-hr:border-gray-300 prose-hr:my-8
+    prose-table:border-collapse prose-table:border prose-table:border-gray-300
+    prose-th:border prose-th:border-gray-300 prose-th:bg-gray-50 prose-th:p-2 prose-th:font-semibold
+    prose-td:border prose-td:border-gray-300 prose-td:p-2
+    dark:prose-headings:text-white
+    dark:prose-p:text-gray-300
+    dark:prose-li:text-gray-300
+    dark:prose-strong:text-white
+    dark:prose-em:text-gray-200
+    dark:prose-blockquote:text-gray-400
+    dark:prose-code:bg-gray-800 dark:prose-code:text-gray-200
+    dark:prose-a:text-blue-400 dark:hover:prose-a:text-blue-300"
           dangerouslySetInnerHTML={{ __html: post.content.rendered }}
         />
 
@@ -379,6 +418,16 @@ async function PostContent({ slug }: { slug: string }) {
               <Button variant="outline">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Blog
+              </Button>
+            </Link>
+            <Link
+              href="https://clipbo.red/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button>
+                GO TO APP
+                <ExternalLink className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </div>
