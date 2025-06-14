@@ -156,9 +156,7 @@ export default function InstagramFeed() {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-800">
-          Latest from Instagram
-        </h3>
+        <h3 className="text-xl font-bold">Latest from Instagram</h3>
         <Link
           href="https://www.instagram.com/prayoga.io/"
           target="_blank"

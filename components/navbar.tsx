@@ -12,7 +12,7 @@ export default function Navbar() {
           <Image
             src="/logo.svg"
             width={200}
-            height={200}
+            height={48.8}
             alt="Clipbored Text Logo"
           />
         </Link>
