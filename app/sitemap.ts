@@ -10,7 +10,7 @@ async function fetchPosts(): Promise<WordPressPost[]> {
   try {
     const response = await fetch(
       "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=100",
-      { next: { revalidate: 86400 } }, // Cache for 24 hours
+      { cache: "no-store" },
     );
 
     if (!response.ok) {

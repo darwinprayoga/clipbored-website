@@ -151,10 +151,9 @@ async function fetchWithRetry(
 
 async function fetchPosts(): Promise<WordPressPost[]> {
   try {
-    // Reduced to 10 posts and increased cache time to 24 hours to reduce API calls
     const response = await fetchWithRetry(
       "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=10",
-      { next: { revalidate: 86400 } }, // Cache for 24 hours
+      { next: { revalidate: 1800 } }, // Cache for 30 minutes
     );
 
     if (!response.ok) {
@@ -187,10 +186,9 @@ async function fetchPosts(): Promise<WordPressPost[]> {
 
 async function fetchCategories(): Promise<WordPressCategory[]> {
   try {
-    // Increased cache time to 24 hours
     const response = await fetchWithRetry(
       "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/categories",
-      { next: { revalidate: 86400 } }, // Cache for 24 hours
+      { next: { revalidate: 1800 } }, // Cache for 30 minutes
     );
 
     if (!response.ok) {
@@ -225,10 +223,9 @@ async function fetchMediaById(mediaId: number): Promise<WordPressMedia | null> {
   if (!mediaId) return null;
 
   try {
-    // Increased cache time to 24 hours
     const response = await fetchWithRetry(
       `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/media/${mediaId}`,
-      { next: { revalidate: 86400 } }, // Cache for 24 hours
+      { next: { revalidate: 1800 } }, // Cache for 30 minutes
     );
 
     if (!response.ok) {

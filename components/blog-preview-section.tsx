@@ -104,7 +104,8 @@ async function fetchLatestPosts(): Promise<WordPressPost[]> {
   try {
     const response = await fetchWithRetry(
       "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=3",
-      { next: { revalidate: 86400 } }, // Cache for 24 hours
+
+      { next: { revalidate: 1800 } }, // Cache for 30 minutes
     );
 
     if (!response.ok) {
@@ -139,7 +140,7 @@ async function fetchCategories(): Promise<WordPressCategory[]> {
   try {
     const response = await fetchWithRetry(
       "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/categories",
-      { next: { revalidate: 86400 } }, // Cache for 24 hours
+      { next: { revalidate: 1800 } }, // Cache for 30 minutes
     );
 
     if (!response.ok) {
@@ -176,7 +177,7 @@ async function fetchMediaById(mediaId: number): Promise<WordPressMedia | null> {
   try {
     const response = await fetchWithRetry(
       `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/media/${mediaId}`,
-      { next: { revalidate: 86400 } }, // Cache for 24 hours
+      { next: { revalidate: 1800 } }, // Cache for 30 minutes
     );
 
     if (!response.ok) {

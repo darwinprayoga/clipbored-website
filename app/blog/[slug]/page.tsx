@@ -79,7 +79,7 @@ async function fetchPostBySlug(slug: string): Promise<WordPressPost | null> {
   try {
     const response = await fetch(
       `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?slug=${slug}`,
-      { next: { revalidate: 3600 } },
+      { cache: "no-store" },
     );
     if (!response.ok) {
       return null;
@@ -96,9 +96,7 @@ async function fetchCategories(): Promise<WordPressCategory[]> {
   try {
     const response = await fetch(
       "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/categories",
-      {
-        next: { revalidate: 3600 },
-      },
+      { cache: "no-store" },
     );
     if (!response.ok) {
       return [];
@@ -116,7 +114,7 @@ async function fetchMediaById(mediaId: number): Promise<WordPressMedia | null> {
   try {
     const response = await fetch(
       `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/media/${mediaId}`,
-      { next: { revalidate: 3600 } },
+      { cache: "no-store" },
     );
     if (!response.ok) {
       return null;
