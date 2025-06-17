@@ -94,7 +94,11 @@ export default function Navbar() {
           <DarkModeToggle variant="ghost" size="icon" />
 
           <Link href="https://clipbo.red">
-            <Button variant="secondary" size="sm" className="ml-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="ml-2 bg-[#F03A17] text-white border-2 border-black animate-pulse hover:bg-[#F03A17] dark:bg-white dark:text-primary"
+            >
               Enter App
             </Button>
           </Link>
