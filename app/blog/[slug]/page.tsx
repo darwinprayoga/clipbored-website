@@ -164,7 +164,7 @@ export async function generateMetadata({
     .substring(0, 160);
 
   // Try to get an image for Open Graph
-  let ogImage = "/og-blog-post.jpg";
+  let ogImage = "/og-image.png";
 
   if (post.featured_media) {
     const featuredImage = await fetchMediaById(post.featured_media);
@@ -289,7 +289,7 @@ async function PostContent({ slug }: { slug: string }) {
     "@type": "BlogPosting",
     headline: cleanTitle(post.title.rendered),
     description: stripHtml(post.excerpt.rendered),
-    image: imageUrl || "/og-blog-post.jpg",
+    image: imageUrl || "/og-image.png",
     author: {
       "@type": "Organization",
       name: "Clipbored",
@@ -299,7 +299,7 @@ async function PostContent({ slug }: { slug: string }) {
       name: "Clipbored",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.clipbo.red/logo.png",
+        url: "https://www.clipbo.red/logo.svg",
       },
     },
     datePublished: post.date,

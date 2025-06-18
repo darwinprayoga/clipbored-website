@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-home.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Clipbored - Smart clipboard manager for designers and creative professionals",
@@ -54,8 +54,8 @@ export const metadata: Metadata = {
     title: "Clipbored - Smart Clipboard Manager for Designers",
     description:
       "The best clipboard manager and to-do app for designers using Figma, Notion, and Excalidraw.",
-    images: ["/og-home.jpg"],
-    creator: "@clipbored",
+    images: ["/og-image.png"],
+    creator: "@prayoga.io",
   },
   alternates: {
     canonical: "https://www.clipbo.red",
@@ -93,7 +93,7 @@ export default function HomePage() {
           "Design asset organization",
           "Creative workflow optimization",
         ],
-        screenshot: "https://www.clipbo.redog-home.jpg",
+        screenshot: "https://www.clipbo.red/screenshot.jpg",
         author: {
           "@type": "Organization",
           name: "Clipbored",

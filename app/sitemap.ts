@@ -9,7 +9,7 @@ interface WordPressPost {
 async function fetchPosts(): Promise<WordPressPost[]> {
   try {
     const response = await fetch(
-      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=100",
+      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts",
       { cache: "no-store" },
     );
 
@@ -46,63 +46,26 @@ async function fetchPosts(): Promise<WordPressPost[]> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await fetchPosts();
 
-  // const staticPages = [
-  //   {
-  //     url: "https://www.clipbo.red/",
-  //     lastModified: new Date(),
-  //     changeFrequency: "weekly" as const,
-  //     priority: 1,
-  //   },
-  //   {
-  //     url: "https://www.clipbo.red/blog",
-  //     lastModified: new Date(),
-  //     changeFrequency: "daily" as const,
-  //     priority: 0.8,
-  //   },
-  //   {
-  //     url: "https://www.clipbo.red/smart-clipboard",
-  //     lastModified: new Date(),
-  //     changeFrequency: "monthly" as const,
-  //     priority: 0.9,
-  //   },
-  //   {
-  //     url: "https://www.clipbo.red/minimal-todo",
-  //     lastModified: new Date(),
-  //     changeFrequency: "monthly" as const,
-  //     priority: 0.9,
-  //   },
-  //   // SEO-targeted landing pages
-  //   {
-  //     url: "https://www.clipbo.red/design-workflows",
-  //     lastModified: new Date(),
-  //     changeFrequency: "monthly" as const,
-  //     priority: 0.8,
-  //   },
-  //   {
-  //     url: "https://www.clipbo.red/figma-integration",
-  //     lastModified: new Date(),
-  //     changeFrequency: "monthly" as const,
-  //     priority: 0.8,
-  //   },
-  //   {
-  //     url: "https://www.clipbo.red/notion-companion",
-  //     lastModified: new Date(),
-  //     changeFrequency: "monthly" as const,
-  //     priority: 0.8,
-  //   },
-  //   {
-  //     url: "https://www.clipbo.red/creative-productivity",
-  //     lastModified: new Date(),
-  //     changeFrequency: "monthly" as const,
-  //     priority: 0.8,
-  //   },
-  //   {
-  //     url: "https://www.clipbo.red/asset-management",
-  //     lastModified: new Date(),
-  //     changeFrequency: "monthly" as const,
-  //     priority: 0.8,
-  //   },
-  // ];
+  const staticPages = [
+    {
+      url: "https://www.clipbo.red/",
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 1,
+    },
+    {
+      url: "https://www.clipbo.red/blog",
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    },
+    {
+      url: "https://clipbo.red/",
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    },
+  ];
 
   const blogPosts = posts.map((post) => ({
     url: `https://www.clipbo.red/blog/${post.slug}`,
@@ -111,8 +74,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [
-    // ...staticPages,
-    ...blogPosts,
-  ];
+  return [...staticPages, ...blogPosts];
 }

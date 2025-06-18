@@ -1,4 +1,3 @@
-import { Home, Search, Settings } from "lucide-react";
 import Link from "next/link";
 import { DarkModeToggle } from "./dark-mode-toggle";
 import { Button } from "./ui/button";

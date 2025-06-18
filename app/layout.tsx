@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "design asset organizer",
     "workflow management for creatives",
   ],
-  authors: [{ name: "Clipbored Team", url: "https://www.clipbo.red" }],
+  authors: [{ name: "prayoga.io", url: "https://www.clipbo.red" }],
   creator: "Clipbored",
   publisher: "Clipbored",
   formatDetection: {
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
       "The best clipboard manager and to-do app for designers using Figma, Notion, and Excalidraw. Organize design assets and boost creative productivity.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Clipbored - Smart clipboard manager for designers and creative professionals",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     title: "Clipbored - Smart Clipboard Manager for Designers",
     description:
       "The best clipboard manager and to-do app for designers using Figma, Notion, and Excalidraw.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
     creator: "@clipbored",
     site: "@clipbored",
   },
@@ -104,7 +104,7 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href="https://www.clipbo.red" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/icon.png" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#6366f1" />
@@ -140,20 +140,20 @@ export default function RootLayout({
                 "Smart clipboard manager and productivity tools designed specifically for designers and creative professionals.",
               contactPoint: {
                 "@type": "ContactPoint",
-                email: "hello@clipbored.com",
+                email: "prayogadevelopment@gmail.com",
                 contactType: "customer service",
               },
               sameAs: [
-                "https://twitter.com/clipbored",
+                "https://twitter.com/prayoga_io",
                 "https://instagram.com/prayoga.io",
-                "https://github.com/clipbored",
-                "https://discord.gg/clipbored",
+                "https://github.com/darwinprayoga",
+                "https://discord.com/invite/nRzwh5vQTf",
               ],
               foundingDate: "2024",
               founders: [
                 {
                   "@type": "Person",
-                  name: "Clipbored Team",
+                  name: "prayoga.io",
                 },
               ],
               knowsAbout: [

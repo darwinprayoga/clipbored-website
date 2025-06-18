@@ -98,10 +98,10 @@ export const metadata: Metadata = {
     title: "Creative Productivity Blog - Design Workflow Tips | Clipbored",
     description:
       "Discover productivity tips for designers, creative workflow optimization strategies, and insights on using clipboard managers with creative tools.",
-    url: "https://www.clipbo.redblog",
+    url: "https://www.clipbo.red/blog",
     images: [
       {
-        url: "/og-blog.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Clipbored Blog - Creative productivity tips and design workflow insights",
@@ -109,7 +109,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: "https://www.clipbo.redblog",
+    canonical: "https://www.clipbo.red/blog",
   },
 };
 
@@ -152,7 +152,7 @@ async function fetchWithRetry(
 async function fetchPosts(): Promise<WordPressPost[]> {
   try {
     const response = await fetchWithRetry(
-      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=10",
+      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts",
       { next: { revalidate: 1800 } }, // Cache for 30 minutes
     );
 
@@ -407,7 +407,7 @@ async function BlogContent({
     name: "Clipbored Creative Productivity Blog",
     description:
       "Productivity tips, design workflow optimization strategies, and insights for creative professionals using clipboard managers and productivity tools.",
-    url: "https://www.clipbo.redblog",
+    url: "https://www.clipbo.red/blog",
     publisher: {
       "@type": "Organization",
       name: "Clipbored",
@@ -418,7 +418,7 @@ async function BlogContent({
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": "https://www.clipbo.redblog",
+      "@id": "https://www.clipbo.red/blog",
     },
     blogPost: filteredPosts.map((post) => {
       const imageUrl = post.featuredImage
@@ -429,7 +429,7 @@ async function BlogContent({
         "@type": "BlogPosting",
         headline: cleanTitle(post.title.rendered),
         description: stripHtml(post.excerpt.rendered),
-        url: `https://www.clipbo.redblog/${post.slug}`,
+        url: `https://www.clipbo.red/blog/${post.slug}`,
         datePublished: post.date,
         image: imageUrl,
         author: {
@@ -441,12 +441,12 @@ async function BlogContent({
           name: "Clipbored",
           logo: {
             "@type": "ImageObject",
-            url: "https://www.clipbo.redlogo.png",
+            url: "https://www.clipbo.red/logo.svg",
           },
         },
         mainEntityOfPage: {
           "@type": "WebPage",
-          "@id": `https://www.clipbo.redblog/${post.slug}`,
+          "@id": `https://www.clipbo.red/blog/${post.slug}`,
         },
       };
     }),
@@ -463,7 +463,7 @@ async function BlogContent({
           "@type": "ListItem",
           position: 2,
           name: "Blog",
-          item: "https://www.clipbo.redblog",
+          item: "https://www.clipbo.red/blog",
         },
       ],
     },
