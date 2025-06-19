@@ -120,6 +120,7 @@ export default function TrustedByMarquee() {
                       width: company.width,
                       height: company.height,
                     }}
+                    loading="lazy"
                   />
                 </div>
               ))}

@@ -9,34 +9,19 @@ interface WordPressPost {
 async function fetchPosts(): Promise<WordPressPost[]> {
   try {
     const response = await fetch(
-      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts",
-      { cache: "no-store" },
+      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=100",
+      {
+        // This enables static generation with revalidation every hour
+        next: { revalidate: 3600 },
+      },
     );
 
     if (!response.ok) {
-      console.error(
-        "Error fetching posts for sitemap:",
-        response.status,
-        response.statusText,
-      );
+      console.error("Error fetching posts:", response.statusText);
       return [];
     }
 
-    const text = await response.text();
-    if (!text) {
-      console.error("Empty response from WordPress API");
-      return [];
-    }
-
-    try {
-      return JSON.parse(text);
-    } catch (parseError) {
-      console.error(
-        "Failed to parse WordPress API response for sitemap:",
-        text.substring(0, 100),
-      );
-      return [];
-    }
+    return await response.json();
   } catch (error) {
     console.error("Error fetching posts for sitemap:", error);
     return [];
@@ -51,19 +36,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: "https://www.clipbo.red/",
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
-      priority: 1,
+      priority: 1.0,
     },
     {
       url: "https://www.clipbo.red/blog",
       lastModified: new Date(),
       changeFrequency: "daily" as const,
       priority: 0.8,
-    },
-    {
-      url: "https://clipbo.red/",
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.9,
     },
   ];
 

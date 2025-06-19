@@ -1,213 +1,17 @@
-import type { Metadata } from "next";
 import { Suspense } from "react";
+import { ArrowLeft, Calendar, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, ExternalLink } from "lucide-react";
-
-interface WordPressPost {
-  id: number;
-  title: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-  };
-  excerpt: {
-    rendered: string;
-  };
-  date: string;
-  link: string;
-  slug: string;
-  categories: number[];
-  author: number;
-  featured_media: number;
-}
-
-interface WordPressCategory {
-  id: number;
-  name: string;
-  slug: string;
-}
-
-interface WordPressMedia {
-  id: number;
-  source_url: string;
-  alt_text: string;
-  media_details: {
-    width: number;
-    height: number;
-    sizes: {
-      medium?: {
-        source_url: string;
-        width: number;
-        height: number;
-      };
-      thumbnail?: {
-        source_url: string;
-        width: number;
-        height: number;
-      };
-      medium_large?: {
-        source_url: string;
-        width: number;
-        height: number;
-      };
-      large?: {
-        source_url: string;
-        width: number;
-        height: number;
-      };
-    };
-  };
-}
-
-export function cleanTitle(html: string): string {
-  return html
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'")
-    .replace(/<[^>]*>/g, "")
-    .trim()
-    .replace(/\s+/g, " "); // Replace multiple spaces with single space
-}
-
-async function fetchPostBySlug(slug: string): Promise<WordPressPost | null> {
-  try {
-    const response = await fetch(
-      `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?slug=${slug}`,
-      { next: { revalidate: 3600 } },
-    );
-    if (!response.ok) {
-      return null;
-    }
-    const posts = await response.json();
-    return posts.length > 0 ? posts[0] : null;
-  } catch (error) {
-    console.error("Error fetching post:", error);
-    return null;
-  }
-}
-
-async function fetchCategories(): Promise<WordPressCategory[]> {
-  try {
-    const response = await fetch(
-      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/categories",
-      {
-        next: { revalidate: 3600 },
-      },
-    );
-    if (!response.ok) {
-      return [];
-    }
-    return response.json();
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    return [];
-  }
-}
-
-async function fetchMediaById(mediaId: number): Promise<WordPressMedia | null> {
-  if (!mediaId) return null;
-
-  try {
-    const response = await fetch(
-      `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/media/${mediaId}`,
-      { next: { revalidate: 3600 } },
-    );
-    if (!response.ok) {
-      return null;
-    }
-    return response.json();
-  } catch (error) {
-    console.error("Error fetching media:", error);
-    return null;
-  }
-}
-
-function extractFirstImageFromContent(
-  content: string,
-): { src: string; alt: string } | null {
-  // Server-side: use regex to extract first image
-  const imgRegex = /<img[^>]+src="([^">]+)"[^>]*(?:alt="([^">]*)")?[^>]*>/i;
-  const match = content.match(imgRegex);
-
-  if (match) {
-    return {
-      src: match[1],
-      alt: match[2] || "Blog post image",
-    };
-  }
-  return null;
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const post = await fetchPostBySlug(params.slug);
-
-  if (!post) {
-    return {
-      title: "Post Not Found | Clipbored Blog",
-      description: "The blog post you are looking for could not be found.",
-    };
-  }
-
-  const title = cleanTitle(post.title.rendered);
-  const description = post.excerpt.rendered
-    .replace(/<[^>]*>/g, "")
-    .substring(0, 160);
-
-  // Try to get an image for Open Graph
-  let ogImage = "/og-image.png";
-
-  if (post.featured_media) {
-    const featuredImage = await fetchMediaById(post.featured_media);
-    if (featuredImage) {
-      ogImage = featuredImage.source_url;
-    }
-  } else if (post.content?.rendered) {
-    const contentImage = extractFirstImageFromContent(post.content.rendered);
-    if (contentImage) {
-      ogImage = contentImage.src;
-    }
-  }
-
-  return {
-    title: `${title} | Clipbored Blog`,
-    description,
-    openGraph: {
-      title,
-      description,
-      url: `https://www.clipbo.red/blog/${post.slug}`,
-      type: "article",
-      publishedTime: post.date,
-      authors: ["Clipbored Team"],
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-    alternates: {
-      canonical: `https://www.clipbo.red/blog/${post.slug}`,
-    },
-  };
-}
+import {
+  fetchPostBySlug,
+  fetchCategories,
+  fetchMediaById,
+  cleanTitle,
+  extractFirstImageFromContent,
+  getOptimalImageUrl,
+  stripHtml,
+} from "@/lib/wp";
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString("en-US", {
@@ -215,24 +19,6 @@ function formatDate(dateString: string): string {
     month: "long",
     day: "numeric",
   });
-}
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "").trim();
-}
-
-function getOptimalImageUrl(media: WordPressMedia): string {
-  // Prefer large size, fallback to medium_large, medium, then original
-  if (media.media_details?.sizes?.large?.source_url) {
-    return media.media_details.sizes.large.source_url;
-  }
-  if (media.media_details?.sizes?.medium_large?.source_url) {
-    return media.media_details.sizes.medium_large.source_url;
-  }
-  if (media.media_details?.sizes?.medium?.source_url) {
-    return media.media_details.sizes.medium.source_url;
-  }
-  return media.source_url;
 }
 
 async function PostContent({ slug }: { slug: string }) {
@@ -265,20 +51,14 @@ async function PostContent({ slug }: { slug: string }) {
     return category?.name || "Uncategorized";
   };
 
-  // Get image data for metadata only (not for display)
-  let featuredImage: WordPressMedia | null = null;
-  let contentImage: { src: string; alt: string } | null = null;
+  let featuredImage = post.featured_media
+    ? await fetchMediaById(post.featured_media)
+    : null;
 
-  if (post.featured_media) {
-    featuredImage = await fetchMediaById(post.featured_media);
-  }
-
-  if (!featuredImage && post.content?.rendered) {
-    contentImage = extractFirstImageFromContent(post.content.rendered);
-    contentImage = contentImage
-      ? { ...contentImage, alt: cleanTitle(post.title.rendered) }
+  let contentImage =
+    !featuredImage && post.content?.rendered
+      ? extractFirstImageFromContent(post.content.rendered)
       : null;
-  }
 
   const imageUrl = featuredImage
     ? getOptimalImageUrl(featuredImage)
@@ -321,116 +101,67 @@ async function PostContent({ slug }: { slug: string }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <article className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <nav aria-label="Breadcrumb" className="mb-4">
-            <ol className="flex items-center space-x-2 text-sm text-gray-600">
-              <li>
-                <Link href="/" className="hover:text-gray-900">
-                  Home
-                </Link>
-              </li>
-              <li>/</li>
-              <li>
-                <Link href="/blog" className="hover:text-gray-900">
-                  Blog
-                </Link>
-              </li>
-              <li>/</li>
-              <li className="text-gray-900 truncate">
-                {cleanTitle(post.title.rendered)}
-              </li>
-            </ol>
-          </nav>
+        <nav className="mb-4 text-sm text-gray-600">
+          <ol className="flex items-center space-x-2">
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>/</li>
+            <li>
+              <Link href="/blog">Blog</Link>
+            </li>
+            <li>/</li>
+            <li>{cleanTitle(post.title.rendered)}</li>
+          </ol>
+        </nav>
 
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Blog
-          </Link>
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 mb-6 text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Blog
+        </Link>
 
-          <div className="flex flex-wrap gap-2 mb-4">
-            {post.categories.map((categoryId) => (
-              <Badge key={categoryId} variant="secondary">
-                {getCategoryName(categoryId)}
-              </Badge>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {post.categories.map((categoryId) => (
+            <Badge key={categoryId} variant="secondary">
+              {getCategoryName(categoryId)}
+            </Badge>
+          ))}
+        </div>
 
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {cleanTitle(post.title.rendered)}
-          </h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          {cleanTitle(post.title.rendered)}
+        </h1>
 
-          <div className="flex items-center gap-4 text-gray-600 mb-8">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <time dateTime={post.date}>{formatDate(post.date)}</time>
-            </div>
-            <Link
-              href={post.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:text-gray-900"
-            >
-              <ExternalLink className="w-4 h-4" />
-              View Original
-            </Link>
-          </div>
+        <div className="text-gray-600 mb-8 flex items-center gap-4">
+          <Calendar className="w-4 h-4" />
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
         </div>
 
         <div
-          className="prose prose-lg max-w-none 
-    prose-headings:text-gray-900 prose-headings:font-bold
-    prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8
-    prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-6 prose-h2:border-b prose-h2:border-gray-200 prose-h2:pb-2
-    prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-5
-    prose-h4:text-lg prose-h4:mb-2 prose-h4:mt-4
-    prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
-    prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800
-    prose-strong:text-gray-900 prose-strong:font-semibold
-    prose-em:text-gray-800 prose-em:italic
-    prose-ul:my-4 prose-ul:pl-6
-    prose-ol:my-4 prose-ol:pl-6
-    prose-li:mb-2 prose-li:text-gray-700
-    prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
-    prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-    prose-pre:bg-gray-900 prose-pre:text-white prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
-    prose-img:rounded-lg prose-img:shadow-md prose-img:my-6
-    prose-hr:border-gray-300 prose-hr:my-8
-    prose-table:border-collapse prose-table:border prose-table:border-gray-300
-    prose-th:border prose-th:border-gray-300 prose-th:bg-gray-50 prose-th:p-2 prose-th:font-semibold
-    prose-td:border prose-td:border-gray-300 prose-td:p-2
-    dark:prose-headings:text-white
-    dark:prose-p:text-gray-300
-    dark:prose-li:text-gray-300
-    dark:prose-strong:text-white
-    dark:prose-em:text-gray-200
-    dark:prose-blockquote:text-gray-400
-    dark:prose-code:bg-gray-800 dark:prose-code:text-gray-200
-    dark:prose-a:text-blue-400 dark:hover:prose-a:text-blue-300"
+          className="prose prose-lg dark:prose-invert max-w-none"
           dangerouslySetInnerHTML={{ __html: post.content.rendered }}
         />
 
-        <div className="mt-12 pt-8 border-t">
-          <div className="flex justify-between items-center">
-            <Link href="/blog">
-              <Button variant="outline">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Blog
-              </Button>
-            </Link>
-            <Link
-              href="https://clipbo.red/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button>
-                GO TO APP
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
+        <div className="mt-12 pt-8 border-t flex justify-between items-center">
+          <Link href="/blog">
+            <Button variant="outline">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Blog
+            </Button>
+          </Link>
+          <Link
+            href="https://clipbo.red/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button>
+              GO TO APP
+              <ExternalLink className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
         </div>
       </article>
     </>
@@ -440,14 +171,14 @@ async function PostContent({ slug }: { slug: string }) {
 function LoadingSkeleton() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="animate-pulse">
-        <div className="h-4 bg-gray-200 rounded w-24 mb-6"></div>
-        <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+      <div className="animate-pulse space-y-4">
+        <div className="h-4 w-24 bg-gray-200 rounded" />
+        <div className="h-8 w-3/4 bg-gray-200 rounded" />
+        <div className="h-4 w-1/2 bg-gray-200 rounded" />
         <div className="space-y-4">
-          <div className="h-4 bg-gray-200 rounded"></div>
-          <div className="h-4 bg-gray-200 rounded"></div>
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded" />
+          <div className="h-4 bg-gray-200 rounded" />
+          <div className="h-4 w-3/4 bg-gray-200 rounded" />
         </div>
       </div>
     </div>

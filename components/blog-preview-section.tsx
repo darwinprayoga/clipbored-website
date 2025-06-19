@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { cleanTitle } from "@/app/blog/[slug]/page";
+import { cleanTitle } from "@/lib/wp";
 
 interface WordPressPost {
   id: number;

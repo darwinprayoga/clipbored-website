@@ -511,14 +511,14 @@ async function BlogContent({
           <section className="mb-8">
             <h2 className="text-lg font-semibold mb-4">Explore Topics</h2>
             <div className="flex flex-wrap gap-2">
-              <a href="/blog">
+              <Link href="/blog">
                 <Badge
                   variant={!selectedCategory ? "default" : "outline"}
                   className="cursor-pointer hover:bg-primary/80 transition-colors"
                 >
                   All Posts
                 </Badge>
-              </a>
+              </Link>
               {categories.map((category) => (
                 <a key={category.id} href={`/blog?category=${category.slug}`}>
                   <Badge
@@ -636,10 +636,10 @@ async function BlogContent({
   );
 }
 
-export default function BlogPage({
+export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: { category?: string };
+  searchParams?: { category?: string };
 }) {
   return (
     <div className="min-h-screen bg-background">
@@ -669,7 +669,7 @@ export default function BlogPage({
           </div>
         }
       >
-        <BlogContent searchParams={searchParams} />
+        <BlogContent searchParams={searchParams ?? {}} />
       </Suspense>
     </div>
   );

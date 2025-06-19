@@ -13,6 +13,8 @@ export default function Navbar() {
             width={200}
             height={48.8}
             alt="Clipbored Text Logo"
+            priority
+            className="h-auto w-auto max-w-[200px]"
           />
         </Link>
 
@@ -23,6 +25,7 @@ export default function Navbar() {
           <Link
             href="https://discord.com/invite/nRzwh5vQTf"
             aria-label="Discord"
+            className="p-2 hover:bg-primary/80 rounded-lg transition-colors min-h-12 min-w-12 flex items-center justify-center"
           >
             <svg
               className="h-7 stroke-current"
@@ -56,6 +59,7 @@ export default function Navbar() {
           <Link
             href="https://api.whatsapp.com/send?phone=628978600340&text=Hello%20PRAYOGA.io%20team%2C%20I%27m%20interested%20in%20the%20Clipbored%20project%20and%20would%20like%20to%20discuss%20investment%20opportunities.%20Here%20are%20my%20details%3AName%3A%20Company%3A%20Email%3A%20Investment%20Interest%3A%20Looking%20forward%20to%20your%20response!"
             aria-label="Whatsapp"
+            className="p-2 hover:bg-primary/80 rounded-lg transition-colors min-h-12 min-w-12 flex items-center justify-center"
           >
             <svg
               className="h-6"
@@ -72,7 +76,11 @@ export default function Navbar() {
             </svg>
           </Link>
 
-          <Link href="/https://www.instagram.com/prayoga.io/" aria-label="Home">
+          <Link
+            href="https://www.instagram.com/prayoga.io/"
+            aria-label="Instagram"
+            className="p-2 hover:bg-primary/80 rounded-lg transition-colors min-h-12 min-w-12 flex items-center justify-center"
+          >
             <svg
               className="h-6 stroke-current"
               viewBox="0 0 192 192"
@@ -96,7 +104,7 @@ export default function Navbar() {
             <Button
               variant="secondary"
               size="sm"
-              className="ml-2 bg-[#F03A17] text-white border-2 border-black animate-pulse hover:bg-[#F03A17] dark:bg-white dark:text-primary"
+              className="ml-2 bg-[#F03A17] text-white border-2 border-black animate-pulse hover:bg-[#F03A17] dark:bg-white dark:text-primary min-h-12"
             >
               Enter App
             </Button>

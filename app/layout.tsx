@@ -1,11 +1,11 @@
-import type React from "react";
 import type { Metadata } from "next";
 import { Source_Sans_3 as Source_Sans_Pro } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { Analytics } from "@vercel/analytics/next";
+import "./globals.css";
+import { Suspense } from "react";
 
 const sourceSansPro = Source_Sans_Pro({
   subsets: ["latin"],
@@ -87,8 +87,8 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-verification-code",
-    yandex: "your-yandex-verification-code",
+    google: "mWLASr0uGeXbn7KwKsMfcQEYPbc2tGnlNvEpW0vwRCM",
+    yandex: "f7ab9faaa1334d3f",
   },
   category: "Productivity Software",
   generator: "v0.dev",
@@ -99,12 +99,50 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Clipbored",
+    url: "https://www.clipbo.red",
+    logo: "https://www.clipbo.red/logo.png",
+    description:
+      "Smart clipboard manager and productivity tools designed specifically for designers and creative professionals.",
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "prayogadevelopment@gmail.com",
+      contactType: "customer service",
+    },
+    sameAs: [
+      "https://twitter.com/prayoga_io",
+      "https://instagram.com/prayoga.io",
+      "https://github.com/darwinprayoga",
+      "https://discord.com/invite/nRzwh5vQTf",
+    ],
+    foundingDate: "2024",
+    founders: [
+      {
+        "@type": "Person",
+        name: "prayoga.io",
+      },
+    ],
+    knowsAbout: [
+      "Clipboard Management",
+      "Design Workflows",
+      "Creative Productivity",
+      "Figma Integration",
+      "Notion Companion Tools",
+      "Task Management for Designers",
+    ],
+    areaServed: "Worldwide",
+    serviceType: "Productivity Software",
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="canonical" href="https://www.clipbo.red" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/icon.png" type="image/svg+xml" />
+        <link rel="icon" href="/icon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#6366f1" />
@@ -114,61 +152,34 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#6366f1" />
         <meta name="msapplication-config" content="/browserconfig.xml" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: (() => {
+              try {
+                return JSON.stringify(jsonLd, null, 2);
+              } catch (e) {
+                console.error("Failed to stringify JSON-LD", e);
+                return "{}";
+              }
+            })(),
+          }}
+        />
       </head>
       <body className={sourceSansPro.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-          enableSystem={true}
+          enableSystem
           disableTransitionOnChange={false}
         >
           <Analytics />
-          <Navbar />
-          {children}
-          <Footer />
+          <Suspense fallback={null}>
+            <Navbar />
+            <main role="main">{children}</main>
+            <Footer />
+          </Suspense>
         </ThemeProvider>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "Clipbored",
-              url: "https://www.clipbo.red",
-              logo: "https://www.clipbo.red/logo.png",
-              description:
-                "Smart clipboard manager and productivity tools designed specifically for designers and creative professionals.",
-              contactPoint: {
-                "@type": "ContactPoint",
-                email: "prayogadevelopment@gmail.com",
-                contactType: "customer service",
-              },
-              sameAs: [
-                "https://twitter.com/prayoga_io",
-                "https://instagram.com/prayoga.io",
-                "https://github.com/darwinprayoga",
-                "https://discord.com/invite/nRzwh5vQTf",
-              ],
-              foundingDate: "2024",
-              founders: [
-                {
-                  "@type": "Person",
-                  name: "prayoga.io",
-                },
-              ],
-              knowsAbout: [
-                "Clipboard Management",
-                "Design Workflows",
-                "Creative Productivity",
-                "Figma Integration",
-                "Notion Companion Tools",
-                "Task Management for Designers",
-              ],
-              areaServed: "Worldwide",
-              serviceType: "Productivity Software",
-            }),
-          }}
-        />
       </body>
     </html>
   );
