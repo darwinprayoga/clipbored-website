@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   return (
-    <header className="bg-primary text-primary-foreground px-4 py-3">
+    <header className="bg-primary text-primary-foreground px-4 py-3 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3">
         <Link href="/" className="flex items-center col-span-2 md:col-span-1">
           <Image

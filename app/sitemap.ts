@@ -7,25 +7,30 @@ interface WordPressPost {
 }
 
 async function fetchPosts(): Promise<WordPressPost[]> {
-  try {
+  const allPosts: WordPressPost[] = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
     const response = await fetch(
-      "https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=100",
-      {
-        // This enables static generation with revalidation every hour
-        next: { revalidate: 3600 },
-      },
+      `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?per_page=100&page=${page}`,
+      { next: { revalidate: 3600 } },
     );
 
     if (!response.ok) {
-      console.error("Error fetching posts:", response.statusText);
-      return [];
+      console.error(`Error fetching page ${page}:`, response.statusText);
+      break;
     }
 
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching posts for sitemap:", error);
-    return [];
+    const posts: WordPressPost[] = await response.json();
+    allPosts.push(...posts);
+
+    // Stop if less than 100 posts are returned (last page)
+    hasMore = posts.length === 100;
+    page++;
   }
+
+  return allPosts;
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
