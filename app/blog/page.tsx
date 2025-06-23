@@ -40,11 +40,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage({
-  searchParams,
-}: {
-  searchParams: { category?: string };
-}) {
+export default function BlogPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -103,7 +99,7 @@ export default function BlogPage({
             </div>
           }
         >
-          <BlogContent searchParams={searchParams} />
+          <BlogContent />
         </Suspense>
       </div>
     </div>

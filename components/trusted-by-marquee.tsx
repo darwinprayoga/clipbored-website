@@ -102,29 +102,37 @@ export default function TrustedByMarquee() {
           <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-muted to-transparent z-10 pointer-events-none" />
 
           {/* Marquee content */}
-          <div className="flex animate-marquee-logos whitespace-nowrap">
-            {/* First set of logos */}
-            <div className="flex items-center gap-12 pr-12">
-              {companies.map((company, index) => (
-                <div
-                  key={`first-${index}`}
-                  className="flex items-center justify-center min-w-fit px-4 py-2"
-                >
-                  <Image
-                    src={company.logo || "/placeholder.svg"}
-                    alt={`${company.name} logo`}
-                    width={company.width}
-                    height={company.height}
-                    className="opacity-60 hover:opacity-100 transition-opacity duration-300 filter grayscale hover:grayscale-0"
-                    style={{
-                      width: company.width,
-                      height: company.height,
-                    }}
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="flex animate-marquee-logos whitespace-nowrap min-w-max">
+            {[...Array(2)].map((_, repeatIndex) => (
+              <div
+                key={repeatIndex}
+                className="flex items-center gap-12 pr-12"
+                aria-hidden={repeatIndex === 1}
+              >
+                {companies.map((company, index) => (
+                  <div
+                    key={`${repeatIndex}-${index}`}
+                    className={`
+              flex items-center justify-center min-w-fit px-4 py-2
+              ${index === 0 ? "ml-4" : ""}
+            `}
+                  >
+                    <Image
+                      src={company.logo || "/placeholder.svg"}
+                      alt={`${company.name} logo`}
+                      width={company.width}
+                      height={company.height}
+                      className="opacity-60 hover:opacity-100 transition-opacity duration-300 filter grayscale hover:grayscale-0"
+                      style={{
+                        width: company.width,
+                        height: company.height,
+                      }}
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>

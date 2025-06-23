@@ -416,7 +416,7 @@ async function BlogPreviewContent() {
                           <Badge
                             key={categoryId}
                             variant="secondary"
-                            className="text-xs"
+                            className="text-xs bg-background dark:bg-secondary"
                           >
                             {getCategoryName(categoryId)}
                           </Badge>

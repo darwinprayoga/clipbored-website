@@ -85,33 +85,35 @@
   }
 }
 
-/* Optimized animations with will-change for better performance */
-@keyframes marquee-mobile {
+/* Critical CSS for above-the-fold content */
+.hero-section {
+  contain: layout style paint;
+}
+
+/* === Seamless infinite marquee animation === */
+@keyframes marquee-scroll {
   0% {
-    transform: translateX(0);
+    transform: translateX(0%);
   }
   100% {
     transform: translateX(-50%);
   }
 }
 
-@keyframes marquee-logos {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee-mobile {
-  animation: marquee-mobile 20s linear infinite;
+.animate-marquee-mobile,
+.animate-marquee-logos {
+  display: flex;
+  flex-wrap: nowrap;
   will-change: transform;
+  animation: marquee-scroll 10s linear infinite;
 }
 
 .animate-marquee-logos {
-  animation: marquee-logos 30s linear infinite;
-  will-change: transform;
+  animation-duration: 15s;
+}
+
+.animate-marquee-mobile {
+  animation-duration: 8s;
 }
 
 @media (min-width: 768px) {
@@ -119,20 +121,20 @@
     animation: none;
     will-change: auto;
   }
+
+  .animate-marquee-logos {
+    animation: marquee-scroll 30s linear infinite;
+    will-change: transform;
+  }
 }
 
-/* Critical CSS for above-the-fold content */
-.hero-section {
-  contain: layout style paint;
-}
-
-/* Reduce motion for accessibility */
+/* === Reduced motion accessibility === */
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee-mobile,
   .animate-marquee-logos {
-    animation: none;
+    animation: none !important;
   }
-  
+
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

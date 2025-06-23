@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -159,36 +160,43 @@ async function fetchWithRetry(
 async function fetchPosts(
   page = 1,
   perPage = POSTS_PER_PAGE,
+  categorySlug?: string,
 ): Promise<{
   posts: WordPressPost[];
   totalPages: number;
   totalPosts: number;
 }> {
-  try {
-    const response = await fetchWithRetry(
-      `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?page=${page}&per_page=${perPage}&_embed=1`,
-    );
+  let url = `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/posts?page=${page}&per_page=${perPage}&_embed=1`;
 
-    if (!response.ok) {
-      console.error(
-        `WordPress API error: ${response.status} ${response.statusText}`,
-      );
-      return { posts: [], totalPages: 0, totalPosts: 0 };
+  if (categorySlug) {
+    // Step 1: Resolve the slug into an ID (needed for filtering)
+    const catRes = await fetchWithRetry(
+      `https://public-api.wordpress.com/wp/v2/sites/clipboredcom.wordpress.com/categories?slug=${categorySlug}`,
+    );
+    const categoryData = await catRes.json();
+    const categoryId = categoryData?.[0]?.id;
+
+    if (categoryId) {
+      url += `&categories=${categoryId}`;
     }
+  }
 
-    const posts = await response.json();
-    const totalPosts = Number.parseInt(
-      response.headers.get("X-WP-Total") || "0",
-    );
-    const totalPages = Number.parseInt(
-      response.headers.get("X-WP-TotalPages") || "0",
-    );
+  const response = await fetchWithRetry(url);
 
-    return { posts, totalPages, totalPosts };
-  } catch (error) {
-    console.error("Error fetching posts:", error);
+  if (!response.ok) {
+    console.error(
+      `WordPress API error: ${response.status} ${response.statusText}`,
+    );
     return { posts: [], totalPages: 0, totalPosts: 0 };
   }
+
+  const posts = await response.json();
+  const totalPosts = Number.parseInt(response.headers.get("X-WP-Total") || "0");
+  const totalPages = Number.parseInt(
+    response.headers.get("X-WP-TotalPages") || "0",
+  );
+
+  return { posts, totalPages, totalPosts };
 }
 
 async function fetchCategories(): Promise<WordPressCategory[]> {
@@ -261,11 +269,12 @@ async function processPostsWithMedia(
   return postsWithMedia;
 }
 
-export function BlogContent({
-  searchParams,
-}: {
-  searchParams: { category?: string };
-}) {
+export function BlogContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const selectedCategory = searchParams.get("category") || "";
+  // ...
+
   const [posts, setPosts] = useState<PostWithMedia[]>([]);
   const [categories, setCategories] = useState<WordPressCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -275,8 +284,6 @@ export function BlogContent({
   const [totalPosts, setTotalPosts] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const selectedCategory = searchParams.category;
-
   // Load initial data
   useEffect(() => {
     async function loadInitialData() {
@@ -285,7 +292,7 @@ export function BlogContent({
 
       try {
         const [postsData, categoriesData] = await Promise.all([
-          fetchPosts(1, POSTS_PER_PAGE),
+          fetchPosts(1, POSTS_PER_PAGE, selectedCategory), // 👈 add category slug
           fetchCategories(),
         ]);
 
@@ -315,7 +322,11 @@ export function BlogContent({
 
     try {
       const nextPage = currentPage + 1;
-      const postsData = await fetchPosts(nextPage, POSTS_PER_PAGE);
+      const postsData = await fetchPosts(
+        nextPage,
+        POSTS_PER_PAGE,
+        selectedCategory,
+      );
       const processedPosts = await processPostsWithMedia(postsData.posts);
 
       setPosts((prevPosts) => [...prevPosts, ...processedPosts]);
@@ -327,17 +338,6 @@ export function BlogContent({
       setLoadingMore(false);
     }
   };
-
-  // Filter posts by category
-  const filteredPosts = selectedCategory
-    ? posts.filter((post) => {
-        const categoryNames = post.categories.map((categoryId) => {
-          const category = categories.find((cat) => cat.id === categoryId);
-          return category?.slug || "";
-        });
-        return categoryNames.includes(selectedCategory);
-      })
-    : posts;
 
   const getCategoryName = (categoryId: number): string => {
     const category = categories.find((cat) => cat.id === categoryId);
@@ -397,7 +397,7 @@ export function BlogContent({
       "@type": "WebPage",
       "@id": "https://www.clipbo.red/blog",
     },
-    blogPost: filteredPosts.map((post) => {
+    blogPost: posts.map((post) => {
       const imageUrl = post.featuredImage
         ? getOptimalImageUrl(post.featuredImage)
         : post.contentImage?.src;
@@ -473,7 +473,7 @@ export function BlogContent({
         </section>
       )}
 
-      {filteredPosts.length === 0 ? (
+      {posts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-lg">
             No blog posts available at the moment.
@@ -486,7 +486,7 @@ export function BlogContent({
       ) : (
         <>
           <main className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {filteredPosts.map((post) => {
+            {posts.map((post) => {
               const imageUrl = post.featuredImage
                 ? getOptimalImageUrl(post.featuredImage)
                 : post.contentImage?.src;
@@ -522,7 +522,7 @@ export function BlogContent({
                           <Badge
                             key={categoryId}
                             variant="secondary"
-                            className="text-xs"
+                            className="text-xs bg-background dark:bg-secondary"
                           >
                             {getCategoryName(categoryId)}
                           </Badge>
@@ -587,8 +587,8 @@ export function BlogContent({
 
           {/* Posts Counter */}
           <div className="text-center mt-8 text-sm text-muted-foreground">
-            Showing {filteredPosts.length} of{" "}
-            {selectedCategory ? filteredPosts.length : totalPosts} posts
+            Showing {posts.length} of{" "}
+            {selectedCategory ? posts.length : totalPosts} posts
             {!selectedCategory && totalPages > 1 && (
               <span>
                 {" "}

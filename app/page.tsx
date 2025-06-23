@@ -1,15 +1,22 @@
-import type { Metadata } from "next"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import BlogPreviewSection from "@/components/blog-preview-section"
-import InstagramFeed from "@/components/instagram-feed"
-import TrustedByMarquee from "@/components/trusted-by-marquee"
-import FAQSection from "@/components/faq-section"
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import BlogPreviewSection from "@/components/blog-preview-section";
+import InstagramFeed from "@/components/instagram-feed";
+import TrustedByMarquee from "@/components/trusted-by-marquee";
+import FAQSection from "@/components/faq-section";
 
 export const metadata: Metadata = {
-  title: "Clipbored - Smart Clipboard Manager for Designers & Creative Professionals",
+  title:
+    "Clipbored - Smart Clipboard Manager for Designers & Creative Professionals",
   description:
     "The best clipboard manager and to-do app for designers using Figma, Notion, and Excalidraw. Organize design assets, manage creative workflows, and boost productivity with our smart clipboard tool.",
   keywords: [
@@ -27,7 +34,8 @@ export const metadata: Metadata = {
     "task management for designers",
   ],
   openGraph: {
-    title: "Clipbored - Smart Clipboard Manager for Designers & Creative Professionals",
+    title:
+      "Clipbored - Smart Clipboard Manager for Designers & Creative Professionals",
     description:
       "The best clipboard manager and to-do app for designers using Figma, Notion, and Excalidraw. Organize design assets and boost creative productivity.",
     url: "https://www.clipbo.red",
@@ -44,14 +52,15 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Clipbored - Smart Clipboard Manager for Designers",
-    description: "The best clipboard manager and to-do app for designers using Figma, Notion, and Excalidraw.",
+    description:
+      "The best clipboard manager and to-do app for designers using Figma, Notion, and Excalidraw.",
     images: ["/og-image.png"],
     creator: "@prayoga.io",
   },
   alternates: {
     canonical: "https://www.clipbo.red",
   },
-}
+};
 
 export default function HomePage() {
   const jsonLd = {
@@ -130,7 +139,7 @@ export default function HomePage() {
         },
       ],
     },
-  }
+  };
 
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -177,18 +186,24 @@ export default function HomePage() {
         },
       },
     ],
-  }
+  };
 
   // Convert FAQ JSON-LD to component props
   const faqs = faqJsonLd.mainEntity.map((item) => ({
     question: item.name,
     answer: item.acceptedAnswer.text,
-  }))
+  }));
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <section className="relative h-96 flex items-center justify-center text-center">
@@ -203,10 +218,12 @@ export default function HomePage() {
           />
           <div className="absolute inset-0 bg-black/30" />
           <div className="relative z-10 text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Your daily hand</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Your daily hand
+            </h1>
             <p className="text-lg md:text-xl mb-6 max-w-2xl mx-auto px-4">
-              The best clipboard manager and to-do app to organize your daily workflow like never before, with
-              Clipbored.
+              The best clipboard manager and to-do app to organize your daily
+              workflow like never before, with Clipbored.
             </p>
 
             <Link href="https://prayoga.io/about">
@@ -261,43 +278,38 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Mobile version - marquee */}
-              <div className="md:hidden flex animate-marquee-mobile whitespace-nowrap text-sm gap-6">
-                <div className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <span role="img" aria-label="Design">
-                    📋
-                  </span>{" "}
-                  Journaling
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <span role="img" aria-label="Figma">
-                    👨‍💻
-                  </span>{" "}
-                  Multitasking
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <span role="img" aria-label="Notion">
-                    🛠️
-                  </span>{" "}
-                  Productive
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <span role="img" aria-label="Lightning">
-                    ⚡️
-                  </span>{" "}
-                  Reliable
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <span role="img" aria-label="Folder">
-                    📱
-                  </span>{" "}
-                  Efficient
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                  <span role="img" aria-label="Book">
-                    📝
-                  </span>{" "}
-                  Organized
+              {/* Mobile version - seamless marquee */}
+              <div className="md:hidden relative overflow-hidden w-full">
+                <div className="flex animate-marquee-mobile whitespace-nowrap min-w-max">
+                  {[...Array(2)].map((_, repeatIndex) => (
+                    <div
+                      key={repeatIndex}
+                      className="flex items-center space-x-6"
+                      aria-hidden={repeatIndex === 1}
+                    >
+                      {[
+                        { emoji: "📋", label: "Journaling" },
+                        { emoji: "👨‍💻", label: "Multitasking" },
+                        { emoji: "🛠️", label: "Productive" },
+                        { emoji: "⚡️", label: "Reliable" },
+                        { emoji: "📱", label: "Efficient" },
+                        { emoji: "📝", label: "Organized" },
+                      ].map((item, index) => (
+                        <div
+                          key={`${repeatIndex}-${index}`}
+                          className={`
+              flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors
+              ${index === 0 ? "ml-6" : ""}
+            `}
+                        >
+                          <span role="img" aria-label={item.label}>
+                            {item.emoji}
+                          </span>
+                          {item.label}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -311,8 +323,9 @@ export default function HomePage() {
               Built for Creative Professionals
             </h2>
             <p className="text-center text-muted-foreground mb-12 max-w-3xl mx-auto">
-              Designed specifically for designers, developers, and creative teams who use Figma, Notion, Excalidraw, and
-              other creative tools daily.
+              Designed specifically for designers, developers, and creative
+              teams who use Figma, Notion, Excalidraw, and other creative tools
+              daily.
             </p>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <article>
@@ -335,11 +348,16 @@ export default function HomePage() {
                       Smart Clipboard
                     </CardTitle>
                     <CardDescription>
-                      Quickly capture, save & reuse anything — text, links, snippets & more.
+                      Quickly capture, save & reuse anything — text, links,
+                      snippets & more.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button variant="outline" className="w-full min-h-12" asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full min-h-12"
+                      asChild
+                    >
                       <Link href="https://clipbo.red">Try Clipboard</Link>
                     </Button>
                   </CardContent>
@@ -366,11 +384,16 @@ export default function HomePage() {
                       Minimal To-do
                     </CardTitle>
                     <CardDescription>
-                      Minimal task management built to manage any briefs, project milestones, and the task deadlines.
+                      Minimal task management built to manage any briefs,
+                      project milestones, and the task deadlines.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button variant="outline" className="w-full min-h-12" asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full min-h-12"
+                      asChild
+                    >
                       <Link href="https://clipbo.red">Try To-do</Link>
                     </Button>
                   </CardContent>
@@ -384,10 +407,12 @@ export default function HomePage() {
         <section className="bg-primary text-primary-foreground py-16 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <blockquote className="text-xl md:text-2xl font-medium mb-4">
-              "Move fast and build things that matter. The tools you use should empower you to do more, not slow you
-              down."
+              "Move fast and build things that matter. The tools you use should
+              empower you to do more, not slow you down."
             </blockquote>
-            <cite className="text-muted-foreground">— Inspired by Mark Zuckerberg</cite>
+            <cite className="text-muted-foreground">
+              — Inspired by Mark Zuckerberg
+            </cite>
           </div>
         </section>
 
@@ -413,16 +438,20 @@ export default function HomePage() {
                 />
               </div>
               <div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-4">Currently in Beta – Premium Upgrade Available</h3>
+                <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                  Currently in Beta – Premium Upgrade Available
+                </h3>
                 <p className="text-muted-foreground mb-6">Free during beta</p>
                 <p className="text-foreground mb-6">
-                  You're using the beta version of Clipbo.red. Want to unlock premium features? Just log in and click
-                  "Upgrade to Premium" — no payment required for now.
+                  You're using the beta version of Clipbo.red. Want to unlock
+                  premium features? Just log in and click "Upgrade to Premium" —
+                  no payment required for now.
                 </p>
                 <p className="text-foreground mb-8">
-                  Premium lets your data sync in real-time across all your devices — phone and desktop — with a single
-                  login. A subscription will be required after the official launch, and we'll let you know the pricing
-                  in advance.
+                  Premium lets your data sync in real-time across all your
+                  devices — phone and desktop — with a single login. A
+                  subscription will be required after the official launch, and
+                  we'll let you know the pricing in advance.
                 </p>
                 <Button size="lg" className="min-h-12" asChild>
                   <Link href="https://clipbo.red">Upgrade now</Link>
@@ -435,7 +464,9 @@ export default function HomePage() {
         {/* Social Media Section with Instagram Feed */}
         <section className="py-12 px-4">
           <div className="max-w-7xl mx-auto">
-            <h3 className="text-2xl font-bold mb-8 text-center">Follow our Creative Journey</h3>
+            <h3 className="text-2xl font-bold mb-8 text-center">
+              Follow our Creative Journey
+            </h3>
 
             {/* Instagram Feed */}
             <div className="mb-8">
@@ -461,8 +492,20 @@ export default function HomePage() {
                     strokeWidth="12"
                     d="m68 138-8 16c-10.19-4.246-20.742-8.492-31.96-15.8-3.912-2.549-6.284-6.88-6.378-11.548-.488-23.964 5.134-48.056 19.369-73.528 1.863-3.334 4.967-5.778 8.567-7.056C58.186 43.02 64.016 40.664 74 39l6 11s6-2 16-2 16 2 16 2l6-11c9.984 1.664 15.814 4.02 24.402 7.068 3.6 1.278 6.704 3.722 8.567 7.056 14.235 25.472 19.857 49.564 19.37 73.528-.095 4.668-2.467 8.999-6.379 11.548-11.218 7.308-21.769 11.554-31.96 15.8l-8-16m-68-8s20 10 40 10 40-10 40-10"
                   />
-                  <ellipse cx="71" cy="101" className="fill-current" rx="13" ry="15" />
-                  <ellipse cx="121" cy="101" className="fill-current" rx="13" ry="15" />
+                  <ellipse
+                    cx="71"
+                    cy="101"
+                    className="fill-current"
+                    rx="13"
+                    ry="15"
+                  />
+                  <ellipse
+                    cx="121"
+                    cy="101"
+                    className="fill-current"
+                    rx="13"
+                    ry="15"
+                  />
                 </svg>
               </Link>
 
@@ -471,7 +514,12 @@ export default function HomePage() {
                 aria-label="Whatsapp"
                 className="p-2 hover:bg-muted rounded-lg transition-colors min-h-12 min-w-12 flex items-center justify-center"
               >
-                <svg className="h-6" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <svg
+                  className="h-6"
+                  viewBox="0 0 192 192"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                >
                   <path
                     className="fill-current"
                     fillRule="evenodd"
@@ -508,5 +556,5 @@ export default function HomePage() {
         <FAQSection faqs={faqs} />
       </div>
     </>
-  )
+  );
 }
