@@ -236,7 +236,7 @@ export default function HomePage() {
 
         {/* Navigation Categories */}
         <nav className="bg-card border-b" aria-label="Product categories">
-          <div className="max-w-7xl mx-auto px-4 py-4 md:overflow-visible overflow-hidden">
+          <div className="max-w-7xl mx-auto md:px-4 py-4 md:overflow-visible overflow-hidden">
             <div className="md:flex md:items-center md:justify-center gap-12 md:text-sm">
               {/* Desktop version - normal centered layout */}
               <div className="hidden md:flex items-center justify-center gap-8 text-sm">
@@ -297,10 +297,9 @@ export default function HomePage() {
                       ].map((item, index) => (
                         <div
                           key={`${repeatIndex}-${index}`}
-                          className={`
-              flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors
-              ${index === 0 ? "ml-6" : ""}
-            `}
+                          className={`flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors ${
+                            index === 0 ? "ml-6" : ""
+                          }`}
                         >
                           <span role="img" aria-label={item.label}>
                             {item.emoji}
