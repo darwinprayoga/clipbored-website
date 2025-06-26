@@ -1,12 +1,44 @@
+"use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DarkModeToggle } from "./dark-mode-toggle";
 import { Button } from "./ui/button";
 import Image from "next/image";
 
 export default function Navbar() {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const controlNavbar = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show navbar when at top of page
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+      }
+      // Hide when scrolling down, show when scrolling up
+      else if (currentScrollY > lastScrollY) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", controlNavbar);
+    return () => window.removeEventListener("scroll", controlNavbar);
+  }, [lastScrollY]);
+
   return (
-    <header className="bg-primary text-primary-foreground px-4 py-3 sticky top-0 z-50">
+    <header
+      className={`bg-primary text-primary-foreground px-4 py-3 sticky top-0 z-50 transition-transform duration-300 ease-in-out ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3">
+        {/* Rest of the navbar content remains the same */}
         <Link href="/" className="flex items-center col-span-2 md:col-span-1">
           <Image
             src="/logo.svg"
